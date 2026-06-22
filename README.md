@@ -128,3 +128,51 @@ El antiguo monolito ha sido descompuesto en tres servicios especializados de baj
 
 *Evidencia - Token Invalido:*
 ![Token Invalido](evidencias/fase2_token_invalido.png)
+
+---
+
+### Fase 3: Observabilidad y Error Tracking Real-Time
+
+#### 1. Estructura de Git y Ramas
+- **Rama del Feature**: `feature/03-observabilidad` (fusionada hacia `main`).
+- **Trazabilidad del Commit**:
+  - Hash del Commit: `39d381e` (o equivalente local)
+  - Mensaje: `feat(sentry): instrumentar backend y separar manejo de excepciones logicas 401 de fallos operacionales 500`
+
+#### 2. Integración de Sentry SDK
+- **`src/instrument.js`**: Carga las variables de entorno e inicializa Sentry con el DSN.
+- **`index.js`**:
+  - Importa `src/instrument.js` en la primera línea absoluta del archivo de arranque.
+  - Registra `Sentry.setupExpressErrorHandler(app)` inmediatamente antes de declarar el manejador de errores global predeterminado.
+
+#### 3. Diferenciación de Excepciones
+- **Excepciones Lógicas (No alertadas a Sentry)**:
+  - Capturadas en `auth.middleware.js`. Retornan un estado HTTP 401 controlado sin contaminar el dashboard de Sentry.
+- **Errores Operacionales (Alertadas a Sentry)**:
+  - En `TransferController`, al recibir el parámetro `simulateError=true` en query o body, se lanza el error `Conexión interrumpida con el Clúster de Datos SecurePay`.
+  - El error se captura en el catch del controlador, se añade el scope `user_id` recuperado del JWT (`req.user.sub`), se reporta a Sentry con `Sentry.captureException` y se responde un código HTTP 500.
+
+---
+
+### Pruebas de Verificación Ejecutadas (Fase 3)
+
+#### Prueba 1: Simulación de Error Operacional 500
+- **Caso**: Enviar una petición autenticada a `POST /v1/transfer-beta/execute?simulateError=true`.
+- **Comprobación**: El servidor responde con código HTTP 500 e imprime el log de error en consola.
+
+*Evidencia - Respuesta de Error Operacional (500):*
+![Error Operacional 500](evidencias/fase3_error_500.png)
+
+#### Prueba 2: Reporte del Incidente en Sentry
+- **Caso**: Revisar el Dashboard de Sentry tras disparar el error operacional.
+- **Comprobación**: Se registra el problema con el mensaje `Conexión interrumpida con el Clúster de Datos SecurePay`.
+
+*Evidencia - Sentry Dashboard (Incidente):*
+![Sentry Dashboard](evidencias/fase3_sentry_dashboard.png)
+
+#### Prueba 3: Validación del Tag user_id en Sentry
+- **Caso**: Inspeccionar el detalle del error en Sentry.
+- **Comprobación**: Se valida que la sección de Tags contenga el parámetro `user_id` asociado al claim `sub` del usuario autenticado (ej: `usr_001`).
+
+*Evidencia - Sentry Tags (user_id):*
+![Sentry Tags](evidencias/fase3_sentry_tags.png)
