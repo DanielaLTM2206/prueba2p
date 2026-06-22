@@ -38,10 +38,30 @@ El antiguo monolito ha sido descompuesto en tres servicios especializados de baj
   - Saldo receptor final: $500.50
   - Se visualiza por consola la confirmación y recepción de la transferencia con los saldos correctos.
 
+*Evidencia - Balance Inicial (ACC-12345):*
+![Balance Inicial](evidencias/balance_inicial.png)
+
+*Evidencia - Transferencia Exitosa:*
+![Transferencia Exitosa](evidencias/transferencia_exitosa.png)
+
+*Evidencia - Balance Final (ACC-12345):*
+![Balance Final](evidencias/balance_final.png)
+
 #### Prueba 2: Validación de Errores
 - **Saldo Insuficiente**: Intentar transferir $999999 desde ACC-12345 lanza correctamente:
   `Saldo insuficiente: La cuenta 'ACC-12345' tiene $1500, requiere $999999.`
+
+*Evidencia - Saldo Insuficiente:*
+![Error Saldo Insuficiente](evidencias/error_saldo_insuficiente.png)
+
 - **Cuenta Inexistente**: Intentar transferir desde ACC-INVALID lanza correctamente:
   `Error de validación: La cuenta origen 'ACC-INVALID' no existe en la base de datos.`
+
+*Evidencia - Cuenta Inexistente:*
+![Error Cuenta Inexistente](evidencias/error_cuenta_inexistente.png)
+
 - **Monto Menor o Igual a Cero**: Intentar transferir $0 o monto negativo lanza correctamente:
   `Error de validación: El monto a transferir debe ser mayor a cero.`
+
+*Evidencia - Monto Invalido:*
+![Error Monto Invalido](evidencias/error_monto_invalido.png)
