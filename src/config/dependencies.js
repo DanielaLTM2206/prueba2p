@@ -3,6 +3,7 @@ const VerificationService = require('../services/verification.service');
 const NotificationService = require('../services/notification.service');
 const TransferController = require('../controllers/transfer.controller');
 const AccountController = require('../controllers/account.controller');
+const AuthController = require('../controllers/auth.controller');
 
 // 1. Servicios de bajo nivel (SRP)
 const storageService = new StorageService();
@@ -12,11 +13,14 @@ const notificationService = new NotificationService();
 // 2. Controladores con Inversión de Dependencias (DIP)
 const transferController = new TransferController(verificationService, storageService, notificationService);
 const accountController = new AccountController(storageService);
+const authController = new AuthController();
 
 module.exports = {
   storageService,
   verificationService,
   notificationService,
   transferController,
-  accountController
+  accountController,
+  authController
 };
+
