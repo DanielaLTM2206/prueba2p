@@ -1,3 +1,5 @@
+const Sentry = require('@sentry/node');
+
 class TransferController {
   constructor(verificationService, storageService, notificationService) {
     this.verificationService = verificationService;
@@ -10,6 +12,11 @@ class TransferController {
   executeTransfer(req, res) {
     try {
       const { fromAccountId, toAccountId, amount } = req.body;
+
+      // Disparador de simulación de error operacional
+      if (req.query.simulateError === 'true' || req.body.simulateError === true) {
+        throw new Error("Conexión interrumpida con el Clúster de Datos SecurePay");
+      }
 
       if (!fromAccountId || !toAccountId || amount === undefined) {
         return res.status(400).json({
@@ -50,6 +57,25 @@ class TransferController {
         balanceRestante: sender.balance
       });
     } catch (error) {
+      // Manejo específico del error operacional simulado
+      if (error.message === "Conexión interrumpida con el Clúster de Datos SecurePay") {
+        Sentry.withScope((scope) => {
+          // Adjuntar el ID del usuario afectado recuperado del JWT (sub)
+          scope.setTag("user_id", req.user?.sub || req.user?.id || "unknown");
+          scope.setExtra("username", req.user?.name || "unknown");
+          scope.setExtra("request_body", req.body);
+          scope.setExtra("request_query", req.query);
+          
+          Sentry.captureException(error);
+        });
+
+        return res.status(500).json({
+          error: 'Error interno del servidor',
+          message: error.message
+        });
+      }
+
+      // Los errores lógicos normales se retornan como 400 Bad Request y NO alertan a Sentry
       return res.status(400).json({
         error: 'Error en la transacción',
         message: error.message
