@@ -48,7 +48,7 @@ El antiguo monolito ha sido descompuesto en tres servicios especializados de baj
 ![Transferencia Exitosa](evidencias/transferencia_exitosa.png)
 
 *Evidencia - Balance Final (ACC-12345):*
-![Balance Final ACC-12345](evidencias/balance_final_12345.png)
+![Balance Final ACC-12345](evidencias/balance_final_12345.jpeg)
 
 *Evidencia - Balance Final (ACC-67890):*
 ![Balance Final ACC-67890](evidencias/balance_final_67890.png)
