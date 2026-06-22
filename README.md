@@ -42,7 +42,7 @@ El antiguo monolito ha sido descompuesto en tres servicios especializados de baj
 ![Balance Inicial usuario ACC-12345](evidencias/balance_inicial_12345.png)
 
 *Evidencia - Balance Inicial (ACC-67890):*
-![Balance Inicial usuario ACC-67890](evidencias/balance_inicial_67890.png)
+![Balance Inicial usuario ACC-67890](evidencias/balance_inicial_67890.jpeg)
 
 *Evidencia - Transferencia Exitosa:*
 ![Transferencia Exitosa](evidencias/transferencia_exitosa.png)
