@@ -39,13 +39,19 @@ El antiguo monolito ha sido descompuesto en tres servicios especializados de baj
   - Se visualiza por consola la confirmación y recepción de la transferencia con los saldos correctos.
 
 *Evidencia - Balance Inicial (ACC-12345):*
-![Balance Inicial](evidencias/balance_inicial.png)
+![Balance Inicial usuario ACC-12345](evidencias/balance_inicial_12345.png)
+
+*Evidencia - Balance Inicial (ACC-67890):*
+![Balance Inicial usuario ACC-67890](evidencias/balance_inicial_67890.png)
 
 *Evidencia - Transferencia Exitosa:*
 ![Transferencia Exitosa](evidencias/transferencia_exitosa.png)
 
 *Evidencia - Balance Final (ACC-12345):*
-![Balance Final](evidencias/balance_final.png)
+![Balance Final ACC-12345](evidencias/balance_final_12345.png)
+
+*Evidencia - Balance Final (ACC-67890):*
+![Balance Final ACC-67890](evidencias/balance_final_67890.png)
 
 #### Prueba 2: Validación de Errores
 - **Saldo Insuficiente**: Intentar transferir $999999 desde ACC-12345 lanza correctamente:
