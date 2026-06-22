@@ -106,7 +106,7 @@ El antiguo monolito ha sido descompuesto en tres servicios especializados de baj
 - **Comprobación**: Se obtiene un token JWT firmado de forma asimétrica.
 
 *Evidencia - Generación de Token:*
-![Generacion de Token](evidencias/fase2_login.png)
+![Generacion de Token](evidencias/evidencias_fase2_login.png)
 
 #### Prueba 2: Acceso Autorizado (Flujo Feliz)
 - **Caso**: Enviar el token generado en la cabecera de autorización a `GET /v1/account-alpha/balance?accountId=ACC-12345`.
