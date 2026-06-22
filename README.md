@@ -71,3 +71,60 @@ El antiguo monolito ha sido descompuesto en tres servicios especializados de baj
 
 *Evidencia - Monto Invalido:*
 ![Error Monto Invalido](evidencias/error_monto_invalido.png)
+
+---
+
+### Fase 2: Seguridad y Autenticación Asimétrica Stateless
+
+#### 1. Estructura de Git y Ramas
+- **Rama del Feature**: `feature/02-auth-jwt` (fusionada hacia `main`).
+- **Trazabilidad del Commit**:
+  - Hash del Commit: `799347c` (o equivalente local)
+  - Mensaje: `feat(jwt): implementar firmado asimetrico rs256 y middleware de validacion autonoma public-key`
+
+#### 2. Criptografía Asimétrica (RS256)
+- Se ejecutó el script `keypair.sh` mediante OpenSSL para generar las llaves:
+  - `private.pem`: Utilizada para firmar el token JWT. Excluida de Git.
+  - `public.pem`: Utilizada de forma autónoma por el middleware para verificar la firma del token sin consultar bases de datos. Excluida de Git.
+
+#### 3. Implementación de Servicios y Middleware
+- **`src/services/jwt.service.js`**:
+  - `signToken(user)`: Carga la llave privada e implementa la firma asimétrica RS256 con claims estructurados (`sub: user.id`, `name: user.name`) y expiración de 2 minutos (`expiresIn: '2m'`).
+  - `verifyToken(token)`: Carga la llave pública y valida la autenticidad y fecha de expiración del token.
+- **`src/middlewares/auth.middleware.js`**:
+  - Extrae el token desde la cabecera `Authorization: Bearer <token>`.
+  - Llama a `jwtService.verifyToken` para realizar la verificación autónoma.
+  - Adjunta el payload decodificado a `req.user` para uso posterior.
+  - Retorna errores controlados de tipo `Token expirado` (cuando se detecta `TokenExpiredError`) y `Token inválido o expirado` para firmas corruptas o malformadas.
+
+---
+
+### Pruebas de Verificación Ejecutadas (Fase 2)
+
+#### Prueba 1: Generación de Token (Login)
+- **Caso**: Enviar credenciales válidas (`admin`/`admin123`) a `POST /v1/auth/token`.
+- **Comprobación**: Se obtiene un token JWT firmado de forma asimétrica.
+
+*Evidencia - Generación de Token:*
+![Generacion de Token](evidencias/fase2_login.png)
+
+#### Prueba 2: Acceso Autorizado (Flujo Feliz)
+- **Caso**: Enviar el token generado en la cabecera de autorización a `GET /v1/account-alpha/balance?accountId=ACC-12345`.
+- **Comprobación**: El middleware valida el token usando la llave pública de manera autónoma y permite la consulta devolviendo los datos de la cuenta con código HTTP 200.
+
+*Evidencia - Acceso Exitoso con Token:*
+![Acceso Exitoso](evidencias/fase2_acceso_valido.png)
+
+#### Prueba 3: Rechazo por Expiración
+- **Caso**: Esperar 2 minutos y enviar el mismo token a `GET /v1/account-alpha/balance`.
+- **Comprobación**: El middleware detecta la expiración y retorna un error controlado (código HTTP 401).
+
+*Evidencia - Token Expirado:*
+![Token Expirado](evidencias/fase2_token_expirado.png)
+
+#### Prueba 4: Rechazo por Token Inválido o Malformado
+- **Caso**: Enviar un token inválido o corrupto a `GET /v1/account-alpha/balance`.
+- **Comprobación**: El middleware detecta que la firma o estructura es inválida y retorna error con código HTTP 401.
+
+*Evidencia - Token Invalido:*
+![Token Invalido](evidencias/fase2_token_invalido.png)
